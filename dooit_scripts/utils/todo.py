@@ -45,3 +45,16 @@ def recurse_todo(todo: Todo) -> list[Todo]:
             result += recurse_todo(child)
 
     return result
+
+
+def get_ancestors(todo: Todo) -> list[Todo]:
+    """
+    Returns all parents, grandparents, etc. of the input Todo.
+    """
+
+    if not todo.parent_todo:
+        return []
+
+    parent = todo.parent_todo
+
+    return [parent] + get_ancestors(todo.parent_todo)

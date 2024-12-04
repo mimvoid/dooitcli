@@ -10,7 +10,7 @@ def checkbox(status: str) -> str:
     """
 
     if NONSTANDARD_MARKDOWN and status == "overdue":
-        return "- [!]"
+        return "- [!] "
 
     if status == "completed":
         return "- [x] "
