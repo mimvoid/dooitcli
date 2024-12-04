@@ -1,10 +1,23 @@
 from dooit.api import Todo
 
+"""
+Helper functions related to dooit's Todo object
+"""
+
 
 def filter_todos(todos: list[Todo], attr: str, value) -> list[Todo]:
+    """
+    Takes in a list of Todo objects, a Todo attribute/property,
+    and the value it should be.
+
+    Returns a list of the Todo objects that match the attribute value.
+
+    The matching is case insensitive.
+    """
+
     result = []
 
-    # Santitize string with case insensitive match
+    # Sanitized string
     fmt_value = str(value).strip().lower()
 
     for todo in todos:
@@ -18,6 +31,13 @@ def filter_todos(todos: list[Todo], attr: str, value) -> list[Todo]:
 
 
 def recurse_todo(todo: Todo) -> list[Todo]:
+    """
+    Given a Todo object, checks if it has subtodos.
+    If so, this function recurses for each subtodo.
+
+    Returns a list with the input Todo and all descendant Todo objects.
+    """
+
     result = [todo]
 
     if len(todo.todos) > 0:
