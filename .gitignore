@@ -1,7 +1,26 @@
-# Result files
+## Result files
 todo.txt
 dooit.md
 dooit.db
+
+
+## Direnv
+
+*.sw?
+.direnv
+.gopath
+/direnv
+/direnv.test
+/dist
+/test/config
+/test/data
+/test/scenarios/inherited/.envrc
+
+# for context: https://github.com/Homebrew/homebrew-bundle/pull/552
+Brewfile.lock.json
+
+
+## Python
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
