@@ -1,13 +1,13 @@
 from dooit.api import Workspace, manager
-from parsers import parse_workspaces
 
+from parsers import dooit_to_markdown
 from config import SHOW_RESULT
 
 
 def main() -> None:
     manager.connect()
 
-    lines = parse_workspaces(Workspace.all())
+    lines = dooit_to_markdown(Workspace.all())
 
     # Write the Markdown file
     f = open("dooit.md", "w")

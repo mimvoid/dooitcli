@@ -1,5 +1,7 @@
-from dooit.api import Workspace, Todo, manager
 import datetime
+
+from dooit.api import Workspace, Todo, manager
+
 
 manager.connect()
 

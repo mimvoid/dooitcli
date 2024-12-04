@@ -1,14 +1,15 @@
 from dooit.api import Workspace, Todo
+
 import formats as fmt
 
 
-def parse_single_todo(todo: Todo, show_due: bool = True) -> str:
+def todo_to_markdown(todo: Todo, show_due: bool = True) -> str:
     """
     Takes in a dooit Todo object and returns a string in Markdown format.
     """
 
     indent = " " * (todo.nest_level * 4)
-    checkbox = fmt.checkbox(todo)
+    checkbox = fmt.checkbox(todo.status)
 
     text = indent + checkbox + todo.description
 
@@ -21,7 +22,7 @@ def parse_single_todo(todo: Todo, show_due: bool = True) -> str:
 
 def parse_todo(todo: Todo) -> list[str]:
     """
-    Takes in a dooit Todo object and formats it with parse_single_todo().
+    Takes in a dooit Todo object and formats it with todo_to_markdown().
 
     If it has children, this function recurses and adds the children's
     lines to the output.
@@ -29,7 +30,7 @@ def parse_todo(todo: Todo) -> list[str]:
 
     lines: list[str] = []
 
-    parent = parse_single_todo(todo)
+    parent = todo_to_markdown(todo)
     lines.append(parent)
 
     if len(todo.todos) > 0:
@@ -39,7 +40,7 @@ def parse_todo(todo: Todo) -> list[str]:
     return lines
 
 
-def parse_workspaces(
+def dooit_to_markdown(
     workspaces: list[Workspace], index: int = 0, first: bool = True
 ) -> list[str]:
     """
@@ -68,4 +69,4 @@ def parse_workspaces(
         else:
             lines = ["", heading, ""] + todo_lines
 
-    return lines + parse_workspaces(workspaces, index + 1, first=False)
+    return lines + dooit_to_markdown(workspaces, index + 1, first=False)

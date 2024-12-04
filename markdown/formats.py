@@ -1,22 +1,21 @@
-from dooit.api import Todo
 import datetime
 
 from config import NONSTANDARD_MARKDOWN
 
 
-def checkbox(todo: Todo) -> str:
+def checkbox(status: str) -> str:
     """
     Takes the todo's status (pending, completed, or overdue)
     and converts it to a markdown checkbox.
     """
 
-    if NONSTANDARD_MARKDOWN and todo.is_overdue:
+    if NONSTANDARD_MARKDOWN and status == "overdue":
         return "- [!]"
 
-    if todo.is_pending:
-        return "- [ ] "
+    if status == "completed":
+        return "- [x] "
 
-    return "- [x] "
+    return "- [ ] "
 
 
 def due_date(date: datetime.datetime | None) -> str:
