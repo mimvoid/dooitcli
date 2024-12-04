@@ -1,7 +1,7 @@
 from dooit.api import Workspace, manager
 
-from parsers import dooit_to_markdown
-from config import SHOW_RESULT
+from .parsers import dooit_to_markdown
+from .config import SHOW_RESULT
 
 
 def main() -> None:

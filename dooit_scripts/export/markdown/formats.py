@@ -1,6 +1,6 @@
 import datetime
 
-from config import NONSTANDARD_MARKDOWN
+from .config import NONSTANDARD_MARKDOWN
 
 
 def checkbox(status: str) -> str:

@@ -1,6 +1,6 @@
 from dooit.api import Todo, manager
 
-from utils import get_targets
+from ..utils.todo import filter_todos
 
 
 def main() -> None:
@@ -13,10 +13,10 @@ def main() -> None:
     value = input("Value: ")
     print("")
 
-    target_todos = get_targets(todos, attr, value)
+    filtered_todos = filter_todos(todos, attr, value)
 
-    for i in target_todos:
-        print(i)
+    for i in filtered_todos:
+        print(i.description)
 
 
 if __name__ == "__main__":
