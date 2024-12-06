@@ -1,9 +1,8 @@
 from dooit.api import Todo, manager
 import click
 
-from ..utils.todo import filter_todos, get_ancestors
+from ..utils.todo import filter_todos
 from ..utils.checkers import is_valid_attr
-from .._vars import INDENT_LEVEL
 
 
 @click.command("query", help="Prints out todos that match an attribute value.")
@@ -12,10 +11,10 @@ def query() -> None:
 
     todos = Todo.all()
 
-    print("")
+    print()
     attr = input("Attribute: ")
     value = input("Value: ")
-    print("")
+    print()
 
     if not is_valid_attr(todos[0], attr):
         print(f"Error: {attr} is not a valid todo attribute!")
@@ -28,12 +27,4 @@ def query() -> None:
         return
 
     for i in filtered_todos:
-        if i.nest_level > 0:
-            # for todo in get_ancestors(i)[::-1]:
-            #     indent = " " * (todo.nest_level * INDENT_LEVEL)
-            #     print(indent + f"({todo.description})")
-
-            indent = " " * (i.nest_level * INDENT_LEVEL)
-            print(indent + i.description)
-        else:
-            print(i.description)
+        print(i.description)

@@ -1,7 +1,7 @@
 from dooit.api import Workspace, Todo
 
 from ...utils.todo import recurse_todo
-from . import formats as fmt
+from . import format
 
 
 def todo_to_markdown(todo: Todo) -> list[str]:
@@ -16,12 +16,12 @@ def todo_to_markdown(todo: Todo) -> list[str]:
 
     for i in todos:
         indent = " " * (i.nest_level * 4)
-        checkbox = fmt.checkbox(i.status)
+        checkbox = format.checkbox(i.status)
 
         text = indent + checkbox + i.description
 
         # if show_due:
-        due_date = fmt.due_date(i.due)
+        due_date = format.due_date(i.due)
         text += due_date
 
         lines.append(text)
@@ -44,19 +44,19 @@ def dooit_to_markdown(
 
     current = workspaces[index]
 
-    lines = []
+    # Exclude workspaces with no todos
+    if len(current.todos) == 0:
+        return []
 
-    # Only get workspaces with todos
-    if len(current.todos) > 0:
-        heading = fmt.heading(current.nest_level, current.description)
+    # Format the heading with padding
+    heading = format.heading(current.nest_level, current.description)
+    if first:
+        lines = [heading, ""]
+    else:
+        lines = ["", heading, ""]
 
-        # Don't add an empty line before the first heading
-        if first:
-            lines = [heading, ""]
-        else:
-            lines = ["", heading, ""]
-
-        for i in current.todos:
-            lines += todo_to_markdown(i)
+    # Format the todos
+    for i in current.todos:
+        lines += todo_to_markdown(i)
 
     return lines + dooit_to_markdown(workspaces, index + 1, first=False)

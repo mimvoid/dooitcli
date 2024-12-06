@@ -3,7 +3,7 @@ from .query.main import query
 from .export.main import export
 
 
-@click.group
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 def main():
     """
     A collection of Python scripts to do with dooit.

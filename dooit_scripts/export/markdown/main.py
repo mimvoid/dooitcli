@@ -1,7 +1,8 @@
 from dooit.api import Workspace, manager
+import click
 
 from .parsers import dooit_to_markdown
-from .config import SHOW_RESULT
+from ..._vars import SHOW_RESULT
 
 
 def main() -> None:
@@ -10,21 +11,10 @@ def main() -> None:
     lines = dooit_to_markdown(Workspace.all())
 
     # Write the Markdown file
-    f = open("dooit.md", "w")
-
-    for i in lines:
-        f.write(i + "\n")
-
-    f.close()
+    with open("dooit.md", "w") as f:
+        f.writelines(map(lambda i: i + "\n", lines))
 
     if SHOW_RESULT:
         # Print new file contents
-        f = open("dooit.md", "r")
-
-        print(f.read())
-
-        f.close()
-
-
-if __name__ == "__main__":
-    main()
+        with open("dooit.md", "r") as f:
+            click.echo_via_pager(f.read())

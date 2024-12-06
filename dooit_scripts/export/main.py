@@ -1,19 +1,12 @@
 import click
 
 @click.command("export", help="Exports the dooit database in a given file format.")
-@click.option(
-    "-f",
-    "--format",
-    type=str,
-    prompt=True,
-    help="Format to export as.",
-)
+@click.argument("format", type=str)
 def export(format: str) -> None:
     match format:
         case "markdown":
-            from .markdown.main import main as cmd
-
-            cmd()
+            from .markdown.main import main
+            main()
         case "todo.txt":
             print("Oops, this option isn't implemented yet.")
             return
