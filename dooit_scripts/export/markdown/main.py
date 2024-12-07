@@ -5,7 +5,12 @@ from .parsers import dooit_to_markdown
 from ..._vars import SHOW_RESULT
 
 
-def main() -> None:
+@click.command()
+def markdown() -> None:
+    """
+    Export to Markdown.
+    """
+
     manager.connect()
 
     lines = dooit_to_markdown(Workspace.all())
