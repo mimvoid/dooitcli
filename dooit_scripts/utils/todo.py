@@ -1,8 +1,16 @@
-from dooit.api import Todo
+from dooit.api import Todo, manager
+from sqlalchemy import select
 
 """
 Helper functions related to dooit's Todo object
 """
+
+
+def sql_filter(attr, value) -> list[Todo]:
+    query = select(Todo).where(attr == value)
+    res = manager.session.execute(query).scalars().all()
+    assert res is not None
+    return res
 
 
 def filter_todos(todos: list[Todo], attr: str, value) -> list[Todo]:
