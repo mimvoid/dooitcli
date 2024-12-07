@@ -5,3 +5,6 @@ SHOW_RESULT = True
 
 # Allow nonstandard Markdown syntax
 NONSTANDARD_MARKDOWN = True
+
+# Render Markdown with rich
+RICH_MARKDOWN = False

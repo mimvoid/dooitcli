@@ -1,6 +1,12 @@
 import click
+from rich.traceback import install
+
 from .query.main import query
 from .export.main import export
+
+
+# Change default traceback to rich's
+install()
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})

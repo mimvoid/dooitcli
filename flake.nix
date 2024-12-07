@@ -24,6 +24,7 @@
               python = pkgs.python312.withPackages (
                 ps: with ps; [
                   click
+                  rich
                 ]
               );
             in

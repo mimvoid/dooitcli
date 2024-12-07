@@ -1,8 +1,10 @@
 from dooit.api import Workspace, manager
+from rich.markdown import Markdown
 import click
 
+from ..._rich import console
 from .parsers import dooit_to_markdown
-from ..._vars import SHOW_RESULT
+from ..._vars import SHOW_RESULT, RICH_MARKDOWN
 
 
 @click.command()
@@ -22,4 +24,8 @@ def markdown() -> None:
     if SHOW_RESULT:
         # Print new file contents
         with open("dooit.md", "r") as f:
-            click.echo_via_pager(f.read())
+            if RICH_MARKDOWN:
+                md = Markdown(f.read())
+                console.print(md)
+            else:
+                print(f.read())
