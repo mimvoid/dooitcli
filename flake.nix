@@ -25,6 +25,7 @@
                 ps: with ps; [
                   click
                   rich
+                  sqlalchemy
                 ]
               );
             in

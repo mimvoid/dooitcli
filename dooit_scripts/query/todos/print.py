@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from dooit.api import Todo
 from rich.table import Table
 from rich.text import Text
@@ -21,7 +23,7 @@ def icon_status(status: str) -> Text:
 
 
 @click.pass_context
-def print_pretty_todos(ctx, todos: list[Todo]) -> None:
+def print_pretty_todos(ctx, todos: Sequence[Todo]) -> None:
     table = Table(
         box=box.ROUNDED,
         border_style="yellow",
@@ -66,7 +68,7 @@ def print_pretty_todos(ctx, todos: list[Todo]) -> None:
     console.print(table, new_line_start=True)
 
 
-def print_plain_todos(todos: list[Todo]) -> None:
+def print_plain_todos(todos: Sequence[Todo]) -> None:
     for i in todos:
         id, status, desc = str(i.id), icon_status(i.status), i.description
         print(id, status, desc)

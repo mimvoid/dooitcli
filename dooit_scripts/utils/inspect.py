@@ -1,44 +1,37 @@
 from inspect import getmembers, ismethod, signature, Signature
-from typing import Callable
+from typing import Any
+
+from dooit.api import Todo, Workspace
 
 
-def get_attrs(object) -> set[str]:
-    """
-    Finds all attributes of an Object or Class.
-    Excludes methods and functions.
-    """
+class InspectOptions:
+    def __init__(self, query_class):
+        self.attributes: dict[str, Any] = dict()
+        self.properties: dict[str, property] = dict()
 
-    attrs = set()
+        for name, value in getmembers(query_class):
+            if (
+                (not name.startswith("_"))
+                and (not ismethod(value))
+                and (not callable(value))
+            ):
+                if isinstance(value, property):
+                    self.properties[name] = value
+                else:
+                    self.attributes[name] = value
 
-    for name, value in getmembers(object):
-        if (not name.startswith("_")) and (not ismethod(value)) and (not callable(value)):
-            attrs.add(name)
+        self.options = self.attributes | self.properties
 
-    return attrs
+    def return_type(self, name: str) -> type | None:
+        if name in self.attributes:
+            # FIX
+            return type(self.attributes[name])
+        elif name in self.properties:
+            prop = self.properties[name]
+            value_return_type = signature(prop.fget).return_annotation
 
+            assert value_return_type != Signature.empty
+            return value_return_type
 
-def get_props(object) -> set[str]:
-    """
-    Finds functions of an Object or Class.
-    """
-
-    props = set()
-
-    for name, value in getmembers(object):
-        if (not name.startswith("_")) and (not ismethod(value)) and (callable(value)):
-            props.add(name)
-
-    return props
-
-
-def get_return_type(func: Callable):
-    """
-    Fetches a function's signature and finds its return type annotation.
-    Returns an AssertionError if the annotation is empty.
-    """
-
-    sig = signature(func)
-    return_type = sig.return_annotation
-
-    assert return_type != Signature.empty
-    return return_type
+todo_opts = InspectOptions(Todo)
+workspace_opts = InspectOptions(Workspace)
