@@ -1,9 +1,26 @@
+import datetime
+
 from dooit.api import Todo, manager
 from sqlalchemy import select
+import click
 
 """
 Helper functions related to dooit's Todo object
 """
+
+
+@click.pass_context
+def due_string(ctx, date: datetime.datetime | None) -> str:
+    if not date:
+        return ""
+
+    dt_format = ctx.obj["DATE"]
+
+    if date.hour != 0 or date.minute != 0:
+        dt_format += ctx.obj["TIME"]
+
+    due = date.strftime(dt_format)
+    return due
 
 
 def sql_filter(attr, value) -> list[Todo]:

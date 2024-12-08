@@ -1,10 +1,12 @@
 from dooit.api import Workspace, Todo
+import click
 
-from ...utils.todo import recurse_todo
+from ...utils.todo import recurse_todo, due_string
 from . import format
 
 
-def todo_to_markdown(todo: Todo) -> list[str]:
+@click.pass_context
+def todo_to_markdown(ctx, todo: Todo) -> list[str]:
     """
     Takes in a dooit Todo object and fetches any existing subtodos.
     Returns a list of the todo/s as strings in Markdown format.
@@ -20,9 +22,17 @@ def todo_to_markdown(todo: Todo) -> list[str]:
 
         text = indent + checkbox + i.description
 
-        # if show_due:
-        due_date = format.due_date(i.due)
-        text += due_date
+        if ctx.obj["DUE"]:
+            if ctx.obj["DATAVIEW"]:
+                text += format.dataview_due(i.due)
+            else:
+                text += due_string(i.due)
+
+        if ctx.obj["URGENCY"]:
+            text += format.urgency(i.urgency)
+
+        if ctx.obj["EFFORT"]:
+            text += format.effort(i.effort)
 
         lines.append(text)
 

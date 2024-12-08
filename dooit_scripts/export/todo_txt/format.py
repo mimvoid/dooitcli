@@ -1,5 +1,7 @@
-from dooit.api import Workspace
 import datetime
+
+from dooit.api import Workspace
+import click
 
 
 def completion(pending: bool) -> str:
@@ -18,18 +20,6 @@ def priority(urgency: int) -> str:
             return "(A) "
         case _:
             return ""
-
-
-def due_date(date: datetime.datetime | None) -> str:
-    if not date:
-        return ""
-
-    dt_format = "%Y-%m-%d"
-    if date.hour != 0 or date.minute != 0:
-        dt_format += " %H:%M"
-
-    due_date = date.strftime(dt_format)
-    return f" due:{due_date}"
 
 
 def project(workspace: Workspace | None) -> str:

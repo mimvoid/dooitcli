@@ -1,37 +1,5 @@
 import datetime
-
-from ..._vars import NONSTANDARD_MARKDOWN
-
-
-def checkbox(status: str) -> str:
-    """
-    Takes the todo's status (pending, completed, or overdue)
-    and converts it to a markdown checkbox.
-    """
-
-    if NONSTANDARD_MARKDOWN and status == "overdue":
-        return "- [!] "
-
-    if status == "completed":
-        return "- [x] "
-
-    return "- [ ] "
-
-
-def due_date(date: datetime.datetime | None) -> str:
-    """
-    Formats the due date and includes the time if present.
-    """
-
-    if not date:
-        return ""
-
-    dt_format = "%Y-%m-%d"
-    if date.hour != 0 or date.minute != 0:
-        dt_format += " %H:%M"
-
-    due_date = date.strftime(dt_format)
-    return f"  (due: {due_date})"
+import click
 
 
 def heading(nest_level: int, text: str) -> str:
@@ -47,3 +15,69 @@ def heading(nest_level: int, text: str) -> str:
         return f"{hashes} {text}"
 
     return f"**{text}**"
+
+
+@click.pass_context
+def checkbox(ctx, status: str) -> str:
+    """
+    Takes the todo's status (pending, completed, or overdue)
+    and converts it to a markdown checkbox.
+    """
+
+    if status == "overdue":
+        if ctx.obj["NONSTANDARD"]:
+            return "- [!] "
+        else:
+            return "- [ ] (!) "
+
+    if status == "completed":
+        return "- [x] "
+
+    return "- [ ] "
+
+
+@click.pass_context
+def dataview_due(ctx, date: datetime.datetime | None) -> str:
+    """
+    Formats the due date for Dataview.
+    """
+
+    if not date:
+        return ""
+
+    dt_format = ctx.obj["DATE"]
+    due_date = date.strftime(dt_format)
+
+    return f"  [due:: {due_date}]"
+
+
+@click.pass_context
+def recurrence(ctx, recur: datetime.timedelta) -> str:
+    return ""
+
+
+@click.pass_context
+def urgency(ctx, urgency: int) -> str:
+    match urgency:
+        case 4:
+            level = "high"
+        case 3:
+            level = "medium"
+        case 2:
+            level = "low"
+        case _:
+            return " "
+
+    if ctx.obj["DATAVIEW"]:
+        return f"  [priority:: {level}]"
+    return f"  (urgency: {level})"
+
+
+@click.pass_context
+def effort(ctx, effort: int) -> str:
+    if effort == 0:
+        return ""
+
+    if ctx.obj["DATAVIEW"]:
+        return f"  [effort:: {effort}]"
+    return f"  (effort: {effort})"
