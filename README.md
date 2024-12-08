@@ -1,6 +1,6 @@
 # What Is This?
 
-It's a collection of Python scripts to do* with [dooit](https://github.com/dooit-org/dooit)!
+It's a Python cli to do* with [dooit](https://github.com/dooit-org/dooit)!
 
 \* get it?
 
