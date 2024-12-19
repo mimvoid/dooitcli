@@ -1,12 +1,10 @@
 from dooit.api import Workspace, Todo
-import click
 
 from ...utils.todo import recurse_todo, due_string
 from . import format
 
 
-@click.pass_context
-def todo_to_markdown(ctx, todo: Todo) -> list[str]:
+def todo_to_markdown(args, todo: Todo) -> list[str]:
     """
     Takes in a dooit Todo object and fetches any existing subtodos.
     Returns a list of the todo/s as strings in Markdown format.
@@ -18,21 +16,21 @@ def todo_to_markdown(ctx, todo: Todo) -> list[str]:
 
     for i in todos:
         indent = " " * (i.nest_level * 4)
-        checkbox = format.checkbox(i.status)
+        checkbox = format.checkbox(args, i.status)
 
         text = indent + checkbox + i.description
 
-        if ctx.obj["DUE"]:
-            if ctx.obj["DATAVIEW"]:
-                text += format.dataview_due(i.due)
+        if args.due:
+            if args.dataview:
+                text += format.dataview_due(args, i.due)
             else:
-                text += due_string(i.due)
+                text += due_string(args, i.due)
 
-        if ctx.obj["URGENCY"]:
-            text += format.urgency(i.urgency)
+        if args.urgency:
+            text += format.urgency(args, i.urgency)
 
-        if ctx.obj["EFFORT"]:
-            text += format.effort(i.effort)
+        if args.effort:
+            text += format.effort(args, i.effort)
 
         lines.append(text)
 
@@ -40,7 +38,7 @@ def todo_to_markdown(ctx, todo: Todo) -> list[str]:
 
 
 def dooit_to_markdown(
-    workspaces: list[Workspace], index: int = 0, first: bool = True
+    args, workspaces: list[Workspace], index: int = 0, first: bool = True
 ) -> list[str]:
     """
     Iterates over a list of dooit Workspace objects.
@@ -67,6 +65,6 @@ def dooit_to_markdown(
 
     # Format the todos
     for i in current.todos:
-        lines += todo_to_markdown(i)
+        lines += todo_to_markdown(args, i)
 
-    return lines + dooit_to_markdown(workspaces, index + 1, first=False)
+    return lines + dooit_to_markdown(args, workspaces, index + 1, first=False)

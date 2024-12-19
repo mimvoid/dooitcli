@@ -3,7 +3,6 @@ from typing import Sequence
 
 from dooit.api import Todo, manager
 from sqlalchemy import select
-import click
 
 from .inspect import todo_opts
 
@@ -12,15 +11,14 @@ Helper functions related to dooit's Todo object
 """
 
 
-@click.pass_context
-def due_string(ctx, date: datetime.datetime | None) -> str:
+def due_string(args, date: datetime.datetime | None) -> str:
     if not date:
         return ""
 
-    dt_format = ctx.obj["DATE"]
+    dt_format = args.date
 
     if date.hour != 0 or date.minute != 0:
-        dt_format += ctx.obj["TIME"]
+        dt_format += args.time
 
     due = date.strftime(dt_format)
     return due

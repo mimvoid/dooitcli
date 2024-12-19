@@ -1,5 +1,4 @@
 import datetime
-import click
 
 
 def heading(nest_level: int, text: str) -> str:
@@ -17,15 +16,14 @@ def heading(nest_level: int, text: str) -> str:
     return f"**{text}**"
 
 
-@click.pass_context
-def checkbox(ctx, status: str) -> str:
+def checkbox(args, status: str) -> str:
     """
     Takes the todo's status (pending, completed, or overdue)
     and converts it to a markdown checkbox.
     """
 
     if status == "overdue":
-        if ctx.obj["NONSTANDARD"]:
+        if args.nonstandard:
             return "- [!] "
         else:
             return "- [ ] (!) "
@@ -36,8 +34,7 @@ def checkbox(ctx, status: str) -> str:
     return "- [ ] "
 
 
-@click.pass_context
-def dataview_due(ctx, date: datetime.datetime | None) -> str:
+def dataview_due(args, date: datetime.datetime | None) -> str:
     """
     Formats the due date for Dataview.
     """
@@ -45,19 +42,17 @@ def dataview_due(ctx, date: datetime.datetime | None) -> str:
     if not date:
         return ""
 
-    dt_format = ctx.obj["DATE"]
+    dt_format = args.date
     due_date = date.strftime(dt_format)
 
     return f"  [due:: {due_date}]"
 
 
-@click.pass_context
-def recurrence(ctx, recur: datetime.timedelta) -> str:
+def recurrence(args, recur: datetime.timedelta) -> str:
     return ""
 
 
-@click.pass_context
-def urgency(ctx, urgency: int) -> str:
+def urgency(args, urgency: int) -> str:
     match urgency:
         case 4:
             level = "high"
@@ -68,16 +63,15 @@ def urgency(ctx, urgency: int) -> str:
         case _:
             return " "
 
-    if ctx.obj["DATAVIEW"]:
+    if args.dataview:
         return f"  [priority:: {level}]"
     return f"  (urgency: {level})"
 
 
-@click.pass_context
-def effort(ctx, effort: int) -> str:
+def effort(args, effort: int) -> str:
     if effort == 0:
         return ""
 
-    if ctx.obj["DATAVIEW"]:
+    if args.dataview:
         return f"  [effort:: {effort}]"
     return f"  (effort: {effort})"

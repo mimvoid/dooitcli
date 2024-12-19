@@ -4,8 +4,8 @@ from dooit.api import Todo
 from rich.table import Table
 from rich.text import Text
 from rich import box
-import click
 
+# from ...args.main import args
 from ..._rich import console
 from ...utils.todo import due_string
 
@@ -22,15 +22,14 @@ def icon_status(status: str) -> Text:
             return Text("")
 
 
-@click.pass_context
-def print_pretty_todos(ctx, todos: Sequence[Todo]) -> None:
+def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
     table = Table(
         box=box.ROUNDED,
         border_style="yellow",
-        show_header=ctx.obj["HEADER"],
+        show_header=(not args.no_header),
     )
 
-    if ctx.obj["ID"]:
+    if args.id:
         table.add_column("ID", justify="right", style="white")
 
     # Status
@@ -38,32 +37,32 @@ def print_pretty_todos(ctx, todos: Sequence[Todo]) -> None:
     # Description
     table.add_column("Description", justify="left")
 
-    if ctx.obj["DUE"]:
+    if args.due:
         table.add_column("Due")
-    if ctx.obj["URGENCY"]:
+    if args.urgency:
         table.add_column("Urgency", justify="center")
-    if ctx.obj["EFFORT"]:
+    if args.effort:
         table.add_column("Effort", justify="center")
 
     for i in todos:
-        args = []
+        row = []
 
-        if ctx.obj["ID"]:
-            args.append(str(i.id))
+        if args.id:
+            row.append(str(i.id))
 
-        args.append(icon_status(i.status))
-        args.append(i.description)
+        row.append(icon_status(i.status))
+        row.append(i.description)
 
-        if ctx.obj["DUE"]:
-            args.append(due_string(i.due))
+        if args.due:
+            row.append(due_string(args, i.due))
 
-        if ctx.obj["URGENCY"]:
-            args.append(str(i.urgency))
+        if args.urgency:
+            row.append(str(i.urgency))
 
-        if ctx.obj["EFFORT"]:
-            args.append(str(i.effort))
+        if args.effort:
+            row.append(str(i.effort))
 
-        table.add_row(*args)
+        table.add_row(*row)
 
     console.print(table, new_line_start=True)
 

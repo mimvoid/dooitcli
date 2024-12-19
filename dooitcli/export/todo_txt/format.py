@@ -1,7 +1,4 @@
-import datetime
-
 from dooit.api import Workspace
-import click
 
 
 def completion(pending: bool) -> str:
