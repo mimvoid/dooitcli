@@ -49,6 +49,11 @@ def prompt_value(name: str):
 
 
 def valid_value(value: str):
+    if value.lower() == "true":
+        return True
+    if value.lower() == "false":
+        return False
+
     try:
         return ast.literal_eval(value)
     except ValueError:

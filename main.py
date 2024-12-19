@@ -1,3 +1,3 @@
-from dooit_scripts.__main__ import main
+from dooitcli.__main__ import main
 
 main()
