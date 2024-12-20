@@ -9,12 +9,12 @@ def completion(pending: bool) -> str:
 
 def priority(urgency: int) -> str:
     match urgency:
-        case 2:
-            return "(C) "
-        case 3:
-            return "(B) "
         case 4:
             return "(A) "
+        case 3:
+            return "(B) "
+        case 2:
+            return "(C) "
         case _:
             return ""
 

@@ -25,8 +25,7 @@ def checkbox(args, status: str) -> str:
     if status == "overdue":
         if args.nonstandard:
             return "- [!] "
-        else:
-            return "- [ ] (!) "
+        return "- [ ] (!) "
 
     if status == "completed":
         return "- [x] "
@@ -61,7 +60,7 @@ def urgency(args, urgency: int) -> str:
         case 2:
             level = "low"
         case _:
-            return " "
+            return ""
 
     if args.dataview:
         return f"  [priority:: {level}]"

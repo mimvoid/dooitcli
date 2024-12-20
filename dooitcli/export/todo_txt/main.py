@@ -12,18 +12,23 @@ def todo_txt(args) -> None:
     manager.connect()
 
     # Get all todos at root level
-    todos = [i for i in Todo.all() if i.nest_level == 0]
+    todos = list(filter(lambda i: i.nest_level == 0, Todo.all()))
 
-    lines = dooit_to_todotxt(todos)
+    lines = dooit_to_todotxt(args, todos)
+    text = "\n".join(lines)
 
     if not args.no_write:
         with open("todo.txt", "w") as f:
-            for i in lines:
-                f.write(i + "\n")
+            f.write(text)
 
     if args.show:
-        with open("todo.txt", "r") as f:
-            if args.rich:
-                console.print(f.read())
-            else:
-                print(f.read())
+        if args.no_write:
+            output = text
+        else:
+            with open("todo.txt", "r") as f:
+                output = f.read()
+
+        if args.rich:
+            console.print(output)
+        else:
+            print(output)

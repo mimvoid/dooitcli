@@ -23,8 +23,8 @@ def todo_to_markdown(args, todo: Todo) -> list[str]:
         if args.due:
             if args.dataview:
                 text += format.dataview_due(args, i.due)
-            else:
-                text += due_string(args, i.due)
+            elif i.due is not None:
+                text += f"  (due: {due_string(args, i.due)})"
 
         if args.urgency:
             text += format.urgency(args, i.urgency)
@@ -53,7 +53,7 @@ def dooit_to_markdown(
     current = workspaces[index]
 
     # Exclude workspaces with no todos
-    if len(current.todos) == 0:
+    if current.todos == []:
         return []
 
     # Format the heading with padding

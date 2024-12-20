@@ -27,6 +27,7 @@ def due_string(args, date: datetime.datetime | None) -> str:
 def filter_todo_db(attr, value) -> Sequence[Todo]:
     todo_attr = getattr(Todo, attr)
     query = select(Todo).where(todo_attr == value)
+
     res = manager.session.execute(query).scalars().all()
     return res
 
@@ -44,14 +45,8 @@ def filter_todos(todos: list[Todo], attr: str, value) -> Sequence[Todo]:
     if attr in todo_opts.attributes:
         return filter_todo_db(attr, value)
 
-    result = []
-
-    for todo in todos:
-        todo_value = getattr(todo, attr)
-        if todo_value == value:
-            result.append(todo)
-
-    return result
+    res = list(filter(lambda t: getattr(t, attr) == value, todos))
+    return res
 
 
 def recurse_todo(todo: Todo) -> list[Todo]:
@@ -64,7 +59,7 @@ def recurse_todo(todo: Todo) -> list[Todo]:
 
     result = [todo]
 
-    if len(todo.todos) > 0:
+    if todo.todos != []:
         for child in todo.todos:
             result += recurse_todo(child)
 
