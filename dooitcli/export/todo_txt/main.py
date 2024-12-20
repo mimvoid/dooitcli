@@ -21,7 +21,7 @@ def todo_txt(args) -> None:
             for i in lines:
                 f.write(i + "\n")
 
-    if args.show_result:
+    if args.show:
         with open("todo.txt", "r") as f:
             if args.rich:
                 console.print(f.read())

@@ -1,50 +1,61 @@
 import argparse
-from . import query, export
+from textwrap import dedent
+from . import query, export, formatter
 
 
 parser = argparse.ArgumentParser(
     prog="dooitcli",
-    description="""
-        A collection of Python scripts to do with dooit.
-        This is currently just a quick and dirty cli
-        implementation with argparse.
-    """,
+    description=dedent("""
+        A CLI companion tool to do with dooit
+
+        This is currently just a quick and dirty implementation with argparse.
+
+        dooit: https://github.com/dooit-org/dooit
+        dooitcli: https://github.com/mimvoid/dooitcli
+    """),
+    add_help=False,
 )
+formatter.format_parser(parser)
 
 
-parser.add_argument(
-    "--version",
-    action="version",
-    version="%(prog)s 0.0.0",
-    help="Prints the version and exits.",
-)
-
-
-# Shared args
-parser.add_argument("--date", default="%Y-%m-%d", help="Date format for datetime.")
-parser.add_argument("--time", default=" %H:%M", help="Time format for datetime.")
-
-toggles = [
-    ("--id", "object ID"),
-    ("--due", "due date"),
-    ("--recurrence", "recurrence"),
-    ("--urgency", "urgency"),
-    ("--effort", "effort")
-]
-
-for arg, desc in toggles:
-    parser.add_argument(
-        arg,
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help=f"Include the {desc} in the output."
-    )
-
-
-subparsers = parser.add_subparsers()
+# Commands:
+subparsers = parser.add_subparsers(title="Commands", metavar="[COMMAND]")
 
 query.add_args(subparsers)
 export.add_args(subparsers)
 
 
-ARGS = parser.parse_args()
+# Options:
+parser.add_argument(
+    "--version",
+    action="version",
+    version="%(prog)s 0.0.0",
+    help="Show the version and exit",
+)
+
+
+# Datetime:
+dt = parser.add_argument_group(
+    "Datetime", "String formats for the Python datetime library."
+)
+dt.add_argument(
+    "--date",
+    default="%Y-%m-%d",
+    help='Date format (default: "%(default)s")',
+)
+dt.add_argument(
+    "--time",
+    default=" %H:%M",
+    help='Time format (default: " %(default)s")',
+)
+
+
+# Toggles:
+toggles = parser.add_argument_group("Toggles", "Show or hide attributes.")
+
+for arg in ["--id", "--due", "--recurrence", "--urgency", "--effort"]:
+    toggles.add_argument(
+        arg,
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )

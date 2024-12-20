@@ -20,7 +20,7 @@ def markdown(args) -> None:
         with open("dooit.md", "w") as f:
             f.write(text)
 
-    if args.show_result:
+    if args.show:
         if args.no_write:
             output = text
         else:
