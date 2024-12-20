@@ -23,3 +23,14 @@ def format_parser(p: argparse.ArgumentParser) -> None:
         default=argparse.SUPPRESS,
         help="Show this help message and exit",
     )
+
+
+def add_toggle_args(p: argparse.ArgumentParser) -> None:
+    toggles = p.add_argument_group("Toggles", "Show or hide attributes.")
+
+    for arg in ["--id", "--due", "--recurrence", "--urgency", "--effort"]:
+        toggles.add_argument(
+            arg,
+            action=argparse.BooleanOptionalAction,
+            default=True,
+        )

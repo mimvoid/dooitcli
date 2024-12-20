@@ -1,6 +1,6 @@
 from argparse import _SubParsersAction, ArgumentParser, BooleanOptionalAction
 
-from .formatter import format_parser
+from .shared import format_parser, add_toggle_args
 from ..export.markdown.main import markdown
 from ..export.todo_txt.main import todo_txt
 
@@ -41,6 +41,8 @@ def add_markdown_args(subparser: _SubParsersAction) -> None:
         help="Format for Obsidian's Dataview and Tasks plugins",
     )
 
+    add_toggle_args(md)
+
 
 def add_todo_txt_args(subparser: _SubParsersAction) -> None:
     desc = "Export to todo.txt"
@@ -50,6 +52,7 @@ def add_todo_txt_args(subparser: _SubParsersAction) -> None:
 
     format_parser(tt)
     add_shared_args(tt)
+    add_toggle_args(tt)
 
 
 def add_args(subparser: _SubParsersAction) -> None:
@@ -72,3 +75,5 @@ def add_args(subparser: _SubParsersAction) -> None:
 
     add_markdown_args(export_group)
     add_todo_txt_args(export_group)
+
+    add_toggle_args(export)

@@ -26,7 +26,11 @@ def prompt_name() -> str:
         except AssertionError:
             console.print(Text(k, style="green"))
 
-    return Prompt.ask("\nName", choices=list(todo_opts.options), show_choices=False)
+    return Prompt.ask(
+        Text("\nName", style="cyan"),
+        choices=list(todo_opts.options),
+        show_choices=False,
+    )
 
 
 def valid_name(name: str):
@@ -35,15 +39,15 @@ def valid_name(name: str):
     if valid:
         return name
 
-    console.print(f"'{name}' is not a valid attribute or property.")
+    console.error(f"'{name}' is not a valid attribute or property.")
     return prompt_name()
 
 
 def prompt_value(name: str):
     if name in todo_opts.attributes:
-        prompt = Prompt.ask("Attribute value")
+        prompt = Prompt.ask(Text("Attribute value", style="cyan"))
     else:
-        prompt = Prompt.ask("Property value")
+        prompt = Prompt.ask(Text("Property value", style="cyan"))
 
     # Handle the booleans simply, case-insensitive
     if prompt.lower() == "true":

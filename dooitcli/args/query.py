@@ -1,7 +1,6 @@
 from argparse import _SubParsersAction
 
-from .formatter import format_parser
-from ..utils.inspect import todo_opts
+from .shared import format_parser, add_toggle_args
 from ..query.todos.main import todos as query_todos
 
 
@@ -15,6 +14,7 @@ def add_todo_args(subparser: _SubParsersAction) -> None:
         + "\n \nOfficial dooit documentation of attributes and properties:\nhttps://dooit-org.github.io/dooit/backend/todo",
         add_help=False,
     )
+
     todos.set_defaults(func=query_todos)
     format_parser(todos)
 
@@ -23,7 +23,6 @@ def add_todo_args(subparser: _SubParsersAction) -> None:
     query.add_argument(
         "--name",
         "-n",
-        choices=todo_opts.options.keys(),
         metavar="ATTR",
         help="The attribute or property to filter by",
     )
@@ -44,6 +43,8 @@ def add_todo_args(subparser: _SubParsersAction) -> None:
         "--no-header", action="store_true", help="Don't show the table header"
     )
 
+    add_toggle_args(todos)
+
 
 def add_args(subparser: _SubParsersAction) -> None:
     desc = "Filter and print items from your dooit database"
@@ -54,6 +55,7 @@ def add_args(subparser: _SubParsersAction) -> None:
         description=desc,
         add_help=False,
     )
+
     format_parser(query)
 
     # Shared args
@@ -64,3 +66,5 @@ def add_args(subparser: _SubParsersAction) -> None:
     # Items:
     query_group = query.add_subparsers(title="Items", metavar="[ITEM]")
     add_todo_args(query_group)
+
+    add_toggle_args(query)

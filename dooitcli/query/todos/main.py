@@ -1,6 +1,7 @@
 from dooit.api import Todo, manager
 
 from ...utils.todo import filter_todos
+from ..._rich import console
 from .print import print_pretty_todos, print_plain_todos
 from .prompt import prompt_name, valid_name, prompt_value, valid_value
 
@@ -26,10 +27,10 @@ def todos(args) -> None:
         found_todos = filter_todos(Todo.all(), name, value)
 
         if not found_todos or len(found_todos) == 0:
-            print(f"Failure: no todos found with {name} of value {value}...")
+            console.failure(f"no todos found with '{name}' of value {value}...")
             return
 
     if args.plain:
-        print_plain_todos(found_todos)
+        print_plain_todos(args, found_todos)
     else:
         print_pretty_todos(args, found_todos)

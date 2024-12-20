@@ -5,9 +5,8 @@ from rich.table import Table
 from rich.text import Text
 from rich import box
 
-# from ...args.main import args
 from ..._rich import console
-from ...utils.todo import due_string
+from ...utils.todo import due_string, get_ancestors
 
 
 def icon_status(status: str) -> Text:
@@ -20,6 +19,20 @@ def icon_status(status: str) -> Text:
             return Text("!", style="red")
         case _:
             return Text("")
+
+
+def color_urgency(urgency: int) -> Text:
+    match urgency:
+        case 4:
+            color = "red"
+        case 3:
+            color = "yellow"
+        case 2:
+            color = "green"
+        case _:
+            color = "cyan"
+
+    return Text(str(urgency), style=color)
 
 
 def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
@@ -35,7 +48,9 @@ def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
     # Status
     table.add_column("", justify="center")
     # Description
-    table.add_column("Description", justify="left")
+    table.add_column("Todo", justify="left")
+    # Workspace
+    table.add_column("Workspace", justify="left")
 
     if args.due:
         table.add_column("Due")
@@ -53,11 +68,18 @@ def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
         row.append(icon_status(i.status))
         row.append(i.description)
 
+        if not i.parent_workspace:
+            row.append(
+                Text(get_ancestors(i)[-1].parent_workspace.description, style="blue")
+            )
+        else:
+            row.append(Text(i.parent_workspace.description, style="magenta"))
+
         if args.due:
             row.append(due_string(args, i.due))
 
         if args.urgency:
-            row.append(str(i.urgency))
+            row.append(color_urgency(i.urgency))
 
         if args.effort:
             row.append(str(i.effort))
@@ -67,7 +89,21 @@ def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
     console.print(table, new_line_start=True)
 
 
-def print_plain_todos(todos: Sequence[Todo]) -> None:
+def print_plain_todos(args, todos: Sequence[Todo]) -> None:
     for i in todos:
-        id, status, desc = str(i.id), icon_status(i.status), i.description
-        print(id, status, desc)
+        row = []
+
+        if args.id:
+            row.append(str(i.id))
+
+        row.append(icon_status(i.status))
+        row.append(i.description)
+
+        if args.due:
+            row.append(due_string(args, i.due))
+        if args.urgency:
+            row.append(i.urgency)
+        if args.effort:
+            row.append(str(i.effort))
+
+        print(*row)

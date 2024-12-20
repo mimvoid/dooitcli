@@ -1,6 +1,6 @@
 import argparse
 from textwrap import dedent
-from . import query, export, formatter
+from . import query, export, shared
 
 
 parser = argparse.ArgumentParser(
@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(
     """),
     add_help=False,
 )
-formatter.format_parser(parser)
+shared.format_parser(parser)
 
 
 # Commands:
@@ -50,12 +50,4 @@ dt.add_argument(
 )
 
 
-# Toggles:
-toggles = parser.add_argument_group("Toggles", "Show or hide attributes.")
-
-for arg in ["--id", "--due", "--recurrence", "--urgency", "--effort"]:
-    toggles.add_argument(
-        arg,
-        action=argparse.BooleanOptionalAction,
-        default=True,
-    )
+shared.add_toggle_args(parser)
