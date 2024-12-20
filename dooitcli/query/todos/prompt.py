@@ -1,19 +1,30 @@
 import ast
 
 from rich.prompt import Prompt
+from rich.text import Text
 
 from ...utils.inspect import todo_opts
 from ..._rich import console
 
 
 def prompt_name() -> str:
-    console.print("Choose one of these attributes or properties:", new_line_start=True)
+    console.print(
+        "Choose one of the following attributes or properties:", new_line_start=True
+    )
 
     console.print("\nAttributes", style="bold")
-    console.print(list(todo_opts.attributes.keys()))
+    for k, _ in todo_opts.attributes.items():
+        console.print(Text(k, style="green"))
 
     console.print("\nProperties", style="bold")
-    console.print(list(todo_opts.properties.keys()))
+    for k in todo_opts.properties:
+        try:
+            console.print(
+                Text(k, style="green"),
+                Text(todo_opts.return_type(k).__name__, style="magenta"),
+            )
+        except AssertionError:
+            console.print(Text(k, style="green"))
 
     return Prompt.ask("\nName", choices=list(todo_opts.options), show_choices=False)
 

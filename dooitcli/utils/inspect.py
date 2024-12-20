@@ -4,11 +4,19 @@ from typing import Any
 from dooit.api import Todo, Workspace
 
 
+def return_sig_type(value: property) -> type | None:
+    value_type = signature(value.fget).return_annotation
+
+    assert value_type != Signature.empty
+    return value_type
+
+
 class InspectOptions:
     def __init__(self, query_class):
         self.attributes: dict[str, Any] = dict()
-        self.properties: dict[str, property] = dict()
+        properties: dict[str, property] = dict()
 
+        # Store properties & attributes
         for name, value in getmembers(query_class):
             if (
                 (not name.startswith("_"))
@@ -16,9 +24,19 @@ class InspectOptions:
                 and (not callable(value))
             ):
                 if isinstance(value, property):
-                    self.properties[name] = value
+                    properties[name] = value
                 else:
                     self.attributes[name] = value
+
+        # Filter out values that can't work as user inputs
+        self.properties: dict[str, property] = dict()
+        for k, v in properties.items():
+            try:
+                # HACK: this is a little iffy
+                if return_sig_type(v).__name__ not in ["List", "Union"]:
+                    self.properties[k] = v
+            except AssertionError:
+                self.properties[k] = v
 
         self.options = self.attributes | self.properties
 
@@ -27,11 +45,8 @@ class InspectOptions:
             # FIX
             return type(self.attributes[name])
         elif name in self.properties:
-            prop = self.properties[name]
-            value_return_type = signature(prop.fget).return_annotation
+            return return_sig_type(self.properties[name])
 
-            assert value_return_type != Signature.empty
-            return value_return_type
 
 todo_opts = InspectOptions(Todo)
 workspace_opts = InspectOptions(Workspace)
