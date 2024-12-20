@@ -14,10 +14,7 @@ def main() -> None:
     # Get command line arguments with argparse
     ARGS = parser.parse_args()
 
-    try:
-        ARGS.func(ARGS) # Execute the specified command
-    except AttributeError:
-        parser.print_help() # No command specified, so print help
+    ARGS.func(ARGS) # Execute the specified command
 
 
 if __name__ == "__main__":

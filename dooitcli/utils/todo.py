@@ -42,7 +42,7 @@ def filter_todos(todos: list[Todo], attr: str, value) -> Sequence[Todo]:
     The matching is case insensitive.
     """
 
-    if attr in todo_opts.attributes:
+    if attr in todo_opts.attr:
         return filter_todo_db(attr, value)
 
     res = list(filter(lambda t: getattr(t, attr) == value, todos))

@@ -13,22 +13,25 @@ def prompt_name() -> str:
     )
 
     console.print("\nAttributes", style="bold")
-    for k, _ in todo_opts.attributes.items():
-        console.print(Text(k, style="green"))
+    for k in todo_opts.input_attr:
+        console.print(
+            Text(k, style="green"),
+            Text(todo_opts.attr_type_str(k), style="magenta"),
+        )
 
     console.print("\nProperties", style="bold")
-    for k in todo_opts.properties:
+    for k in todo_opts.input_prop:
         try:
             console.print(
                 Text(k, style="green"),
-                Text(todo_opts.return_type(k).__name__, style="magenta"),
+                Text(todo_opts.prop_type_str(k), style="magenta"),
             )
         except AssertionError:
             console.print(Text(k, style="green"))
 
     return Prompt.ask(
         Text("\nName", style="cyan"),
-        choices=list(todo_opts.options),
+        choices=list(todo_opts.input_options),
         show_choices=False,
     )
 
@@ -44,7 +47,7 @@ def valid_name(name: str):
 
 
 def prompt_value(name: str):
-    if name in todo_opts.attributes:
+    if name in todo_opts.attr:
         prompt = Prompt.ask(Text("Attribute value", style="cyan"))
     else:
         prompt = Prompt.ask(Text("Property value", style="cyan"))
