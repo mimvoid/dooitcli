@@ -1,9 +1,10 @@
-import ast
+from datetime import datetime, timedelta
+import dateutil.parser
 
 from rich.prompt import Prompt
 from rich.text import Text
 
-from ...utils.inspect import todo_opts
+from ...utils.inspect import todo_opts, to_bool
 from ..._rich import console
 
 
@@ -16,7 +17,7 @@ def prompt_name() -> str:
     for k in todo_opts.input_attr:
         console.print(
             Text(k, style="green"),
-            Text(todo_opts.attr_type_str(k), style="magenta"),
+            Text(todo_opts.get_type_str(k), style="magenta"),
         )
 
     console.print("\nProperties", style="bold")
@@ -24,7 +25,7 @@ def prompt_name() -> str:
         try:
             console.print(
                 Text(k, style="green"),
-                Text(todo_opts.prop_type_str(k), style="magenta"),
+                Text(todo_opts.get_type_str(k), style="magenta"),
             )
         except AssertionError:
             console.print(Text(k, style="green"))
@@ -48,31 +49,40 @@ def valid_name(name: str):
 
 def prompt_value(name: str):
     if name in todo_opts.attr:
-        prompt = Prompt.ask(Text("Attribute value", style="cyan"))
-    else:
-        prompt = Prompt.ask(Text("Property value", style="cyan"))
+        return Prompt.ask(Text("Attribute value", style="cyan"))
 
-    # Handle the booleans simply, case-insensitive
-    if prompt.lower() == "true":
-        return True
-    if prompt.lower() == "false":
-        return False
+    return Prompt.ask(Text("Property value", style="cyan"))
 
+
+def valid_value(args, name: str, value: str):
     try:
-        # Try to parse a Python literal from the user input
-        return ast.literal_eval(prompt)
-    except ValueError:
-        # Otherwise, just return the string
-        return prompt
+        target = todo_opts.get_type(name)
 
+        if value == "None":
+            return None
 
-def valid_value(value: str):
-    if value.lower() == "true":
-        return True
-    if value.lower() == "false":
-        return False
+        if issubclass(target, str):
+            return value
 
-    try:
-        return ast.literal_eval(value)
-    except ValueError:
-        return value
+        if issubclass(target, datetime):
+            return dateutil.parser.parse(value)
+
+        # TODO: if issubclass(target_type, timedelta):
+
+        if issubclass(target, bool):
+            return to_bool(value)
+
+        if issubclass(target, int):
+            return int(value)
+
+        console.error("couldn't process value: %s" % value)
+        return valid_value(args, name, prompt_value(name))
+
+    except AssertionError:
+        # As far as I can tell, nest_level is the only one whose
+        # return type couldn't be inspected
+        if name == "nest_level":
+            return int(value)
+    except Exception:
+        console.error("couldn't process value: %s" % value)
+        return valid_value(args, name, prompt_value(name))

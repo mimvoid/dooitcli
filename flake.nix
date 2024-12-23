@@ -23,6 +23,7 @@
             let
               python = pkgs.python312.withPackages (
                 ps: with ps; [
+                  dateutil
                   rich
                   sqlalchemy
                 ]

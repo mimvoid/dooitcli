@@ -20,9 +20,9 @@ def todos(args) -> None:
             name = valid_name(args.name)
 
         if not args.value:
-            value = prompt_value(args.name)
+            value = valid_value(args, name, prompt_value(args.name))
         else:
-            value = valid_value(args.value)
+            value = valid_value(args, name, args.value)
 
         found_todos = filter_todos(Todo.all(), name, value)
 

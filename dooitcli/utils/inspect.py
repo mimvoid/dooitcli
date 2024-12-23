@@ -1,3 +1,8 @@
+"""
+Inspect types and the attributes and properties of
+Todo and Workspace objects for querying
+"""
+
 from inspect import getmembers, ismethod, get_annotations, signature, Signature
 from typing import Any, ForwardRef
 
@@ -16,6 +21,19 @@ def recurse_type(value_type: type) -> type:
         return value_type
 
     return recurse_type(value_type.__args__[0])
+
+
+def to_bool(value) -> bool:
+    if isinstance(value, bool):
+        return value
+
+    if value.lower() in ("true", "t", "yes", "y", "1"):
+        return True
+
+    if value.lower() in ("false", "f", "no", "n", "0"):
+        return False
+
+    raise ValueError("invalid literal for boolean: %s" % value)
 
 
 class InspectOptions:
@@ -38,7 +56,6 @@ class InspectOptions:
         self.options = self.attr | self.prop
 
         # Filter out values that can't work as user inputs
-        # HACK: this is iffy
         self.input_attr = {
             k: v
             for k, v in self.attr.items()
@@ -49,24 +66,26 @@ class InspectOptions:
         for k, v in self.prop.items():
             if k not in ("has_same_parent_kind", "session"):
                 try:
-                    if return_sig_type(v).__name__ not in ("List", "Union"):
+                    if not issubclass(return_sig_type(v), list):
                         self.input_prop[k] = v
                 except AssertionError:
                     self.input_prop[k] = v
+                except TypeError:
+                    pass
 
         self.input_options = self.input_attr | self.input_prop
 
-    def attr_type(self, name: str) -> type:
-        return recurse_type(self.attr[name])
+    def get_type(self, name: str) -> type:
+        if name in self.attr:
+            return recurse_type(self.attr[name])
 
-    def attr_type_str(self, name: str) -> str:
-        return self.attr_type(name).__name__
+        if name in self.prop:
+            return return_sig_type(self.prop[name])
 
-    def prop_type(self, name: str) -> type:
-        return return_sig_type(self.prop[name])
+        raise AttributeError("invalid attribute or property name: '%s'" % name)
 
-    def prop_type_str(self, name: str) -> str:
-        return self.prop_type(name).__name__
+    def get_type_str(self, name: str) -> str:
+        return self.get_type(name).__name__
 
 
 todo_opts = InspectOptions(Todo)
