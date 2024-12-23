@@ -6,7 +6,8 @@ from rich.text import Text
 from rich import box
 
 from ..._rich import console
-from ...utils.todo import due_string, get_ancestors
+from ...utils.format import due_str
+from ...utils.tree import get_ancestors
 
 
 def icon_status(status: str) -> Text:
@@ -76,7 +77,7 @@ def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
             row.append(Text(i.parent_workspace.description, style="magenta"))
 
         if args.due:
-            row.append(due_string(args, i.due))
+            row.append(due_str(args, i.due))
 
         if args.urgency:
             row.append(color_urgency(i.urgency))

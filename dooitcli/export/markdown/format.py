@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 
 def heading(nest_level: int, text: str) -> str:
@@ -33,7 +33,7 @@ def checkbox(args, status: str) -> str:
     return "- [ ] "
 
 
-def dataview_due(args, date: datetime.datetime | None) -> str:
+def dataview_due(args, date: datetime | None) -> str:
     """
     Formats the due date for Dataview.
     """
@@ -47,7 +47,7 @@ def dataview_due(args, date: datetime.datetime | None) -> str:
     return f"  [due:: {due_date}]"
 
 
-def recurrence(args, recur: datetime.timedelta) -> str:
+def recurrence(args, recur: timedelta) -> str:
     return ""
 
 

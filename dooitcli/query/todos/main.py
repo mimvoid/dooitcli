@@ -1,9 +1,9 @@
 from dooit.api import Todo, manager
 
-from ...utils.todo import filter_todos
-from ..._rich import console
 from .print import print_pretty_todos, print_plain_todos
 from .prompt import prompt_name, valid_name, prompt_value, valid_value
+from ...utils.filter import filter_todos
+from ..._rich import console
 
 
 def todos(args) -> None:
@@ -12,11 +12,11 @@ def todos(args) -> None:
     if args.all:
         found_todos = Todo.all()
     else:
+        # Make sure the name and value exist
         if not args.name:
-            # Make sure the name and value exist
             name = prompt_name()
         else:
-            # Check if the name is valid, and reprompt if not
+            # Check if the name is valid, and prompt if not
             name = valid_name(args.name)
 
         if not args.value:

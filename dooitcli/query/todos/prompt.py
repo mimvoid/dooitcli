@@ -38,9 +38,7 @@ def prompt_name() -> str:
 
 
 def valid_name(name: str):
-    valid = name in todo_opts.options
-
-    if valid:
+    if name in todo_opts.options:
         return name
 
     console.error(f"'{name}' is not a valid attribute or property.")

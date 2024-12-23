@@ -1,6 +1,7 @@
 from dooit.api import Workspace, Todo
 
-from ...utils.todo import recurse_todo, due_string
+from ...utils.format import due_str
+from ...utils.tree import recurse_todo
 from . import format
 
 
@@ -24,7 +25,7 @@ def todo_to_markdown(args, todo: Todo) -> list[str]:
             if args.dataview:
                 text += format.dataview_due(args, i.due)
             elif i.due is not None:
-                text += f"  (due: {due_string(args, i.due)})"
+                text += f"  (due: {due_str(args, i.due)})"
 
         if args.urgency:
             text += format.urgency(args, i.urgency)

@@ -1,9 +1,9 @@
-from rich.traceback import install
+from rich import traceback
 from .args.main import parser
 
 
 # Change default traceback to rich's
-install()
+traceback.install(extra_lines=2)
 
 
 def main() -> None:
@@ -14,7 +14,7 @@ def main() -> None:
     # Get command line arguments with argparse
     ARGS = parser.parse_args()
 
-    ARGS.func(ARGS) # Execute the specified command
+    ARGS.func(ARGS)  # Execute the specified command
 
 
 if __name__ == "__main__":

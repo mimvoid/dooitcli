@@ -1,7 +1,8 @@
 from dooit.api import Todo
 
 from . import format
-from ...utils.todo import recurse_todo, due_string
+from ...utils.format import due_str
+from ...utils.tree import recurse_todo
 
 
 def sub_todos(args, children: list[Todo]) -> str:
@@ -18,7 +19,7 @@ def sub_todos(args, children: list[Todo]) -> str:
         if not child.due:
             children_str += f", {desc}"
         else:
-            due_date = due_string(args, child.due)
+            due_date = due_str(args, child.due)
             children_str += f", ({desc} => due:{due_date})"
 
     return children_str
@@ -39,7 +40,7 @@ def dooit_to_todotxt(args, todos: list[Todo]) -> list[str]:
                 row += sub_todos(args, descendants)
 
         project_name = format.project(todo.parent_workspace)
-        due_date = f" due:{due_string(args, todo.due)}"
+        due_date = f" due:{due_str(args, todo.due)}"
 
         row += project_name + due_date
 
