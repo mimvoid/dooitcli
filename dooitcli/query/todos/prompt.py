@@ -1,3 +1,4 @@
+from typing import Any
 from datetime import datetime, timedelta
 import dateutil.parser
 
@@ -37,7 +38,7 @@ def prompt_name() -> str:
     )
 
 
-def valid_name(name: str):
+def valid_name(name: str) -> str:
     if name in todo_opts.options:
         return name
 
@@ -45,14 +46,14 @@ def valid_name(name: str):
     return prompt_name()
 
 
-def prompt_value(name: str):
+def prompt_value(name: str) -> str:
     if name in todo_opts.attr:
         return Prompt.ask(Text("Attribute value", style="cyan"))
 
     return Prompt.ask(Text("Property value", style="cyan"))
 
 
-def valid_value(args, name: str, value: str):
+def valid_value(name: str, value: str) -> Any:
     try:
         target = todo_opts.get_type(name)
 
@@ -74,7 +75,7 @@ def valid_value(args, name: str, value: str):
             return int(value)
 
         console.error("couldn't process value: %s" % value)
-        return valid_value(args, name, prompt_value(name))
+        return valid_value(name, prompt_value(name))
 
     except AssertionError:
         # As far as I can tell, nest_level is the only one whose
@@ -83,4 +84,4 @@ def valid_value(args, name: str, value: str):
             return int(value)
     except Exception:
         console.error("couldn't process value: %s" % value)
-        return valid_value(args, name, prompt_value(name))
+        return valid_value(name, prompt_value(name))

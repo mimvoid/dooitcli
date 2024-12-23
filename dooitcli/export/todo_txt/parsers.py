@@ -5,7 +5,7 @@ from ...utils.format import due_str
 from ...utils.tree import recurse_todo
 
 
-def sub_todos(args, children: list[Todo]) -> str:
+def sub_todos(children: list[Todo], datefmt: str, timefmt: str) -> str:
     """
     Follows dopart format
     https://github.com/inkarkat/todo.txt-cli-ex/blob/master/tests/t2400-dopart.sh
@@ -19,7 +19,7 @@ def sub_todos(args, children: list[Todo]) -> str:
         if not child.due:
             children_str += f", {desc}"
         else:
-            due_date = due_str(args, child.due)
+            due_date = due_str(child.due, datefmt, timefmt)
             children_str += f", ({desc} => due:{due_date})"
 
     return children_str
@@ -37,10 +37,10 @@ def dooit_to_todotxt(args, todos: list[Todo]) -> list[str]:
         if len(todo.todos) > 0:
             for child in todo.todos:
                 descendants = recurse_todo(child)
-                row += sub_todos(args, descendants)
+                row += sub_todos(descendants, args.date, args.time)
 
         project_name = format.project(todo.parent_workspace)
-        due_date = f" due:{due_str(args, todo.due)}"
+        due_date = f" due:{due_str(todo.due, args.date, args.time)}"
 
         row += project_name + due_date
 

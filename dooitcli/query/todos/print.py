@@ -1,4 +1,5 @@
-from typing import Sequence
+from argparse import Namespace
+from collections.abc import Sequence
 
 from dooit.api import Todo
 from rich.table import Table
@@ -36,7 +37,7 @@ def color_urgency(urgency: int) -> Text:
     return Text(str(urgency), style=color)
 
 
-def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
+def print_pretty_todos(args: Namespace, todos: Sequence[Todo]) -> None:
     table = Table(
         box=box.ROUNDED,
         border_style="yellow",
@@ -77,7 +78,7 @@ def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
             row.append(Text(i.parent_workspace.description, style="magenta"))
 
         if args.due:
-            row.append(due_str(args, i.due))
+            row.append(due_str(i.due, args.date, args.time))
 
         if args.urgency:
             row.append(color_urgency(i.urgency))
@@ -90,7 +91,7 @@ def print_pretty_todos(args, todos: Sequence[Todo]) -> None:
     console.print(table, new_line_start=True)
 
 
-def print_plain_todos(args, todos: Sequence[Todo]) -> None:
+def print_plain_todos(args: Namespace, todos: Sequence[Todo]) -> None:
     for i in todos:
         row = []
 
@@ -101,7 +102,7 @@ def print_plain_todos(args, todos: Sequence[Todo]) -> None:
         row.append(i.description)
 
         if args.due:
-            row.append(due_string(args, i.due))
+            row.append(due_str(i.due, args.date, args.time))
         if args.urgency:
             row.append(i.urgency)
         if args.effort:

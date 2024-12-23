@@ -1,10 +1,12 @@
+from argparse import Namespace
+
 from dooit.api import Todo, manager
 
 from ..._rich import console
 from .parsers import dooit_to_todotxt
 
 
-def todo_txt(args) -> None:
+def todo_txt(args: Namespace) -> None:
     """
     Export to todo.txt.
     """

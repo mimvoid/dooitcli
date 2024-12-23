@@ -1,4 +1,5 @@
-from typing import Sequence, Any
+from typing import Any
+from collections.abc import Sequence
 
 from dooit.api import Todo, manager
 from sqlalchemy import select
@@ -17,14 +18,14 @@ def filter_db(cls: type, attr: str, value: Any) -> Sequence:
     return manager.session.execute(query).scalars().all()
 
 
-def filter_obj(lst: Sequence, attr: str, value: Any) -> Sequence:
+def filter_obj(lst: Sequence, attr: str, value: Any) -> list:
     def query(obj) -> bool:
         return getattr(obj, attr) == value
 
     return list(filter(query, lst))
 
 
-def filter_todos(todos: Sequence[Todo], attr: str, value) -> Sequence[Todo]:
+def filter_todos(todos: Sequence[Todo], attr: str, value: Any) -> Sequence[Todo]:
     """
     Takes in a sequence of Todo objects, an attribute or property,
     and the value it should be.

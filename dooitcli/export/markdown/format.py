@@ -16,14 +16,14 @@ def heading(nest_level: int, text: str) -> str:
     return f"**{text}**"
 
 
-def checkbox(args, status: str) -> str:
+def checkbox(status: str, nonstandard: bool) -> str:
     """
     Takes the todo's status (pending, completed, or overdue)
     and converts it to a markdown checkbox.
     """
 
     if status == "overdue":
-        if args.nonstandard:
+        if nonstandard:
             return "- [!] "
         return "- [ ] (!) "
 
@@ -33,7 +33,7 @@ def checkbox(args, status: str) -> str:
     return "- [ ] "
 
 
-def dataview_due(args, date: datetime | None) -> str:
+def dataview_due(date: datetime | None, datefmt: str) -> str:
     """
     Formats the due date for Dataview.
     """
@@ -41,17 +41,17 @@ def dataview_due(args, date: datetime | None) -> str:
     if not date:
         return ""
 
-    dt_format = args.date
+    dt_format = datefmt
     due_date = date.strftime(dt_format)
 
     return f"  [due:: {due_date}]"
 
 
-def recurrence(args, recur: timedelta) -> str:
+def recurrence(recur: timedelta) -> str:
     return ""
 
 
-def urgency(args, urgency: int) -> str:
+def urgency(urgency: int, dataview: bool) -> str:
     match urgency:
         case 4:
             level = "high"
@@ -62,15 +62,15 @@ def urgency(args, urgency: int) -> str:
         case _:
             return ""
 
-    if args.dataview:
+    if dataview:
         return f"  [priority:: {level}]"
     return f"  (urgency: {level})"
 
 
-def effort(args, effort: int) -> str:
+def effort(effort: int, dataview: bool) -> str:
     if effort == 0:
         return ""
 
-    if args.dataview:
+    if dataview:
         return f"  [effort:: {effort}]"
     return f"  (effort: {effort})"

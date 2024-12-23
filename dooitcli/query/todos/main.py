@@ -1,3 +1,5 @@
+from argparse import Namespace
+
 from dooit.api import Todo, manager
 
 from .print import print_pretty_todos, print_plain_todos
@@ -6,7 +8,7 @@ from ...utils.filter import filter_todos
 from ..._rich import console
 
 
-def todos(args) -> None:
+def todos(args: Namespace) -> None:
     manager.connect()
 
     if args.all:
@@ -20,9 +22,9 @@ def todos(args) -> None:
             name = valid_name(args.name)
 
         if not args.value:
-            value = valid_value(args, name, prompt_value(args.name))
+            value = valid_value(name, prompt_value(args.name))
         else:
-            value = valid_value(args, name, args.value)
+            value = valid_value(name, args.value)
 
         found_todos = filter_todos(Todo.all(), name, value)
 
