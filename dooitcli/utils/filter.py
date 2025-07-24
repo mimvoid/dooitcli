@@ -19,10 +19,7 @@ def filter_db(cls: type, attr: str, value: Any) -> Sequence:
 
 
 def filter_obj(lst: Sequence, attr: str, value: Any) -> list:
-    def query(obj) -> bool:
-        return getattr(obj, attr) == value
-
-    return list(filter(query, lst))
+    return list(filter(lambda obj: getattr(obj, attr) == value, lst))
 
 
 def filter_todos(todos: Sequence[Todo], attr: str, value: Any) -> Sequence[Todo]:

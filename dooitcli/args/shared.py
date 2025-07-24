@@ -2,12 +2,8 @@ import argparse
 
 
 class CapitalisedHelpFormatter(argparse.RawDescriptionHelpFormatter):
-    def add_usage(self, usage, actions, groups, prefix=None):
-        if prefix is None:
-            prefix = "Usage: "
-        return super(CapitalisedHelpFormatter, self).add_usage(
-            usage, actions, groups, prefix
-        )
+    def add_usage(self, usage, actions, groups, prefix="Usage: "):
+        return super().add_usage(usage, actions, groups, prefix)
 
 
 def format_parser(p: argparse.ArgumentParser) -> None:

@@ -13,11 +13,9 @@ def todo_to_markdown(args: Namespace, todo: Todo) -> list[str]:
     Returns a list of the todo/s as strings in Markdown format.
     """
 
-    todos = recurse_todo(todo)
-
     lines = []
 
-    for i in todos:
+    for i in recurse_todo(todo):
         indent = " " * (i.nest_level * 4)
         checkbox = format.checkbox(i.status, args.nonstandard)
 
@@ -41,7 +39,7 @@ def todo_to_markdown(args: Namespace, todo: Todo) -> list[str]:
 
 
 def dooit_to_markdown(
-    args: Namespace, workspaces: list[Workspace], index: int = 0, first: bool = True
+    args: Namespace, workspaces: list[Workspace], index=0, first=True
 ) -> list[str]:
     """
     Iterates over a list of dooit Workspace objects.
@@ -61,10 +59,7 @@ def dooit_to_markdown(
 
     # Format the heading with padding
     heading = format.heading(current.nest_level, current.description)
-    if first:
-        lines = [heading, ""]
-    else:
-        lines = ["", heading, ""]
+    lines = [heading, ""] if first else ["", heading, ""]
 
     # Format the todos
     for i in current.todos:

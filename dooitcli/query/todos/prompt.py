@@ -54,11 +54,11 @@ def prompt_value(name: str) -> str:
 
 
 def valid_value(name: str, value: str) -> Any:
+    if value == "None":
+        return None
+
     try:
         target = todo_opts.get_type(name)
-
-        if value == "None":
-            return None
 
         if issubclass(target, str):
             return value

@@ -21,13 +21,7 @@ def markdown(args) -> None:
             f.write(text)
 
     if args.show:
-        if args.no_write:
-            output = text
-        else:
-            with open("dooit.md", "r") as f:
-                output = f.read()
-
         if args.rich:
-            console.print(Markdown(output, justify="left"))
+            console.print(Markdown(text, justify="left"))
         else:
-            print(output)
+            print(text)

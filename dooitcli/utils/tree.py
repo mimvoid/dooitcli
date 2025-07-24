@@ -15,9 +15,8 @@ def recurse_todo(todo: Todo) -> list[Todo]:
 
     result = [todo]
 
-    if todo.todos != []:
-        for child in todo.todos:
-            result += recurse_todo(child)
+    for child in todo.todos:
+        result += recurse_todo(child)
 
     return result
 
@@ -30,6 +29,4 @@ def get_ancestors(todo: Todo) -> list[Todo]:
     if not todo.parent_todo:
         return []
 
-    parent = todo.parent_todo
-
-    return [parent] + get_ancestors(todo.parent_todo)
+    return [todo.parent_todo] + get_ancestors(todo.parent_todo)

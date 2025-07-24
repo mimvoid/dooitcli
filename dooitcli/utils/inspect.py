@@ -17,10 +17,10 @@ def return_sig_type(value: property) -> type:
 
 
 def recurse_type(value_type: type) -> type:
-    if not hasattr(value_type, "__args__"):
-        return value_type
+    if hasattr(value_type, "__args__"):
+        return recurse_type(value_type.__args__[0])
 
-    return recurse_type(value_type.__args__[0])
+    return value_type
 
 
 def to_bool(value) -> bool:

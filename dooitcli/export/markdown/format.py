@@ -23,9 +23,7 @@ def checkbox(status: str, nonstandard: bool) -> str:
     """
 
     if status == "overdue":
-        if nonstandard:
-            return "- [!] "
-        return "- [ ] (!) "
+        return "- [!] " if nonstandard else "- [ ] (!) "
 
     if status == "completed":
         return "- [x] "

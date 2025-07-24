@@ -2,9 +2,7 @@ from dooit.api import Workspace
 
 
 def completion(pending: bool) -> str:
-    if pending:
-        return ""
-    return "x "
+    return "" if pending else "x "
 
 
 def priority(urgency: int) -> str:

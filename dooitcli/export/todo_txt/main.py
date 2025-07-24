@@ -24,13 +24,7 @@ def todo_txt(args: Namespace) -> None:
             f.write(text)
 
     if args.show:
-        if args.no_write:
-            output = text
-        else:
-            with open("todo.txt", "r") as f:
-                output = f.read()
-
         if args.rich:
-            console.print(output)
+            console.print(text)
         else:
-            print(output)
+            print(text)

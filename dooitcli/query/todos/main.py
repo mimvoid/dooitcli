@@ -15,11 +15,7 @@ def todos(args: Namespace) -> None:
         found_todos = Todo.all()
     else:
         # Make sure the name and value exist
-        if not args.name:
-            name = prompt_name()
-        else:
-            # Check if the name is valid, and prompt if not
-            name = valid_name(args.name)
+        name = valid_name(args.name) if args.name else prompt_name()
 
         if not args.value:
             value = valid_value(name, prompt_value(args.name))
@@ -28,7 +24,7 @@ def todos(args: Namespace) -> None:
 
         found_todos = filter_todos(Todo.all(), name, value)
 
-        if not found_todos or len(found_todos) == 0:
+        if not found_todos:
             console.failure(f"no todos found with '{name}' of value {value}...")
             return
 
