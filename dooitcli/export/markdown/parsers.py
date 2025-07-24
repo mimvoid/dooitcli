@@ -7,40 +7,50 @@ from ...utils.tree import recurse_todo
 from . import format
 
 
-def todo_to_markdown(args: Namespace, todo: Todo) -> list[str]:
+def todo_to_markdown(args: Namespace, todo: Todo) -> str:
+    indent = " " * (todo.nest_level * 4)
+    checkbox = format.checkbox(todo.status, args.nonstandard)
+
+    text = indent + checkbox + todo.description
+
+    if args.due:
+        if args.dataview:
+            text += format.dataview_due(todo.due, args.date)
+        elif todo.due is not None:
+            text += f"  (due: {due_str(todo.due, args.date, args.time)})"
+
+    if args.urgency:
+        text += format.urgency(todo.urgency, args.dataview)
+    if args.effort:
+        text += format.effort(todo.effort, args.dataview)
+
+    return text
+
+
+def todo_tree_to_markdown(args: Namespace, todo: Todo) -> list[str]:
     """
     Takes in a dooit Todo object and fetches any existing subtodos.
     Returns a list of the todo/s as strings in Markdown format.
     """
 
-    lines = []
+    return list(map(lambda todo: todo_to_markdown(args, todo), recurse_todo(todo)))
 
-    for i in recurse_todo(todo):
-        indent = " " * (i.nest_level * 4)
-        checkbox = format.checkbox(i.status, args.nonstandard)
 
-        text = indent + checkbox + i.description
+def workspace_to_markdown(
+    args: Namespace, workspace: Workspace, index: int
+) -> list[str]:
+    # Format the heading with padding
+    heading = format.heading(workspace.nest_level, workspace.description)
+    lines = [heading, ""] if index == 0 else ["", heading, ""]
 
-        if args.due:
-            if args.dataview:
-                text += format.dataview_due(i.due, args.date)
-            elif i.due is not None:
-                text += f"  (due: {due_str(i.due, args.date, args.time)})"
-
-        if args.urgency:
-            text += format.urgency(i.urgency, args.dataview)
-
-        if args.effort:
-            text += format.effort(i.effort, args.dataview)
-
-        lines.append(text)
+    # Format the todos
+    for i in workspace.todos:
+        lines += todo_tree_to_markdown(args, i)
 
     return lines
 
 
-def dooit_to_markdown(
-    args: Namespace, workspaces: list[Workspace], index=0, first=True
-) -> list[str]:
+def dooit_to_markdown(args: Namespace, workspaces: list[Workspace]) -> list[str]:
     """
     Iterates over a list of dooit Workspace objects.
 
@@ -48,21 +58,10 @@ def dooit_to_markdown(
     for each Workspace.
     """
 
-    if index >= len(workspaces):
-        return []
+    result = []
+    for i, ws in enumerate(workspaces):
+        if not ws.todos:
+            continue  # Skip workspaces with no todos
+        result += workspace_to_markdown(args, ws, i)
 
-    current = workspaces[index]
-
-    # Exclude workspaces with no todos
-    if current.todos == []:
-        return []
-
-    # Format the heading with padding
-    heading = format.heading(current.nest_level, current.description)
-    lines = [heading, ""] if first else ["", heading, ""]
-
-    # Format the todos
-    for i in current.todos:
-        lines += todo_to_markdown(args, i)
-
-    return lines + dooit_to_markdown(args, workspaces, index + 1, first=False)
+    return result
