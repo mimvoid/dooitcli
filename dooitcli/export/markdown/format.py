@@ -6,10 +6,10 @@ def heading(nest_level: int, text: str) -> str:
     Should take in a Workspace object's nest_level and description text.
 
     Returns a Markdown heading based on the nest_level, or bold text
-    if greater than 6, Markdown's smallest heading size.
+    if greater than or equal to 6, Markdown's smallest heading size.
     """
 
-    if nest_level <= 6:
+    if nest_level < 6:
         hashes = "#" * (nest_level + 1)
         return f"{hashes} {text}"
 
