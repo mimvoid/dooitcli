@@ -11,10 +11,12 @@ def main() -> None:
     A CLI companion tool to do with dooit.
     """
 
-    # Get command line arguments with argparse
-    ARGS = parser.parse_args()
+    ARGS = parser.parse_args()  # Get command line arguments with argparse
 
-    ARGS.func(ARGS)  # Execute the specified command
+    if hasattr(ARGS, "func"):
+        ARGS.func(ARGS)  # Execute the specified command
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
