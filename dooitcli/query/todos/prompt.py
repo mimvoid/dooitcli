@@ -33,13 +33,13 @@ def prompt_name() -> str:
 
     return Prompt.ask(
         Text("\nName", style="cyan"),
-        choices=list(todo_opts.input_options),
+        choices=list(todo_opts.input_attr) + list(todo_opts.input_prop),
         show_choices=False,
     )
 
 
 def valid_name(name: str) -> str:
-    if name in todo_opts.options:
+    if name in todo_opts.input_attr or name in todo_opts.input_prop:
         return name
 
     console.error(f"'{name}' is not a valid attribute or property.")
@@ -47,10 +47,8 @@ def valid_name(name: str) -> str:
 
 
 def prompt_value(name: str) -> str:
-    if name in todo_opts.attr:
-        return Prompt.ask(Text("Attribute value", style="cyan"))
-
-    return Prompt.ask(Text("Property value", style="cyan"))
+    text = "Attribute value" if name in todo_opts.attr else "Property value"
+    return Prompt.ask(Text(text, style="cyan"))
 
 
 def valid_value(name: str, value: str) -> Any:
@@ -58,6 +56,11 @@ def valid_value(name: str, value: str) -> Any:
         return None
 
     try:
+        # As far as I can tell, nest_level is the only one whose
+        # return type couldn't be inspected
+        if name == "nest_level":
+            return int(value)
+
         target = todo_opts.get_type(name)
 
         if issubclass(target, str):
@@ -76,12 +79,6 @@ def valid_value(name: str, value: str) -> Any:
 
         console.error("couldn't process value: %s" % value)
         return valid_value(name, prompt_value(name))
-
-    except AssertionError:
-        # As far as I can tell, nest_level is the only one whose
-        # return type couldn't be inspected
-        if name == "nest_level":
-            return int(value)
     except Exception:
         console.error("couldn't process value: %s" % value)
         return valid_value(name, prompt_value(name))

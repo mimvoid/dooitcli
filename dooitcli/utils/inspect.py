@@ -36,44 +36,44 @@ def to_bool(value) -> bool:
     raise ValueError("invalid literal for boolean: %s" % value)
 
 
-class InspectOptions:
-    def __init__(self, query_class):
-        self.attr: dict[str, Any] = dict()
-        self.prop: dict[str, property] = dict()
+class OptionInspector:
+    attr: dict[str, Any] = dict()
+    prop: dict[str, property] = dict()
 
+    # Only stores values can work as user inputs
+    input_attr: dict[str, Any] = dict()
+    input_prop: dict[str, property] = dict()
+
+    def __init__(self, query_class):
         annotations = get_annotations(query_class)
 
         # Store public properties & attributes
         for name, value in getmembers(
             query_class, lambda v: not ismethod(v) and not callable(v)
         ):
-            if not name.startswith("_"):
-                if isinstance(value, property):
-                    self.prop[name] = value
-                elif name in annotations:
-                    self.attr[name] = annotations[name]
+            if name.startswith("_"):
+                continue
 
-        self.options = self.attr | self.prop
+            if isinstance(value, property):
+                self._add_property(name, value)
+            elif name in annotations:
+                self.attr[name] = annotations[name]
+                if not isinstance(recurse_type(value), ForwardRef):
+                    self.input_attr[name] = annotations[name]
 
-        # Filter out values that can't work as user inputs
-        self.input_attr = {
-            k: v
-            for k, v in self.attr.items()
-            if not isinstance(recurse_type(v), ForwardRef)
-        }
+    def _add_property(self, name: str, value: property) -> None:
+        self.prop[name] = value
 
-        self.input_prop: dict[str, property] = dict()
-        for k, v in self.prop.items():
-            if k not in ("has_same_parent_kind", "session"):
-                try:
-                    if not issubclass(return_sig_type(v), list):
-                        self.input_prop[k] = v
-                except AssertionError:
-                    self.input_prop[k] = v
-                except TypeError:
-                    pass
+        if name in ("has_same_parent_kind", "session"):
+            return
 
-        self.input_options = self.input_attr | self.input_prop
+        try:
+            if not issubclass(return_sig_type(value), list):
+                self.input_prop[name] = value
+        except AssertionError:
+            self.input_prop[name] = value
+        except TypeError:
+            pass
 
     def get_type(self, name: str) -> type:
         if name in self.attr:
@@ -88,5 +88,5 @@ class InspectOptions:
         return self.get_type(name).__name__
 
 
-todo_opts = InspectOptions(Todo)
-workspace_opts = InspectOptions(Workspace)
+todo_opts = OptionInspector(Todo)
+workspace_opts = OptionInspector(Workspace)
