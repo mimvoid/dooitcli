@@ -14,7 +14,7 @@ def todo_txt(args: Namespace) -> None:
     manager.connect()
 
     # Get all todos at root level
-    todos = list(filter(lambda i: i.nest_level == 0, Todo.all()))
+    todos = [i for i in Todo.all() if i.nest_level == 0]
 
     lines = dooit_to_todotxt(args, todos)
     text = "\n".join(lines)

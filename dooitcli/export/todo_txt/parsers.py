@@ -11,18 +11,18 @@ def sub_todos(children: list[Todo], datefmt: str, timefmt: str) -> str:
     https://github.com/inkarkat/todo.txt-cli-ex/blob/master/tests/t2400-dopart.sh
     """
 
-    children_str = ""
+    children_str = []
 
     for child in children:
         desc = child.description
 
         if not child.due:
-            children_str += f", {desc}"
+            children_str.append(f", {desc}")
         else:
             due_date = due_str(child.due, datefmt, timefmt)
-            children_str += f", ({desc} => due:{due_date})"
+            children_str.append(f", ({desc} => due:{due_date})")
 
-    return children_str
+    return "".join(children_str)
 
 
 def dooit_to_todotxt(args, todos: list[Todo]) -> list[str]:
@@ -32,18 +32,19 @@ def dooit_to_todotxt(args, todos: list[Todo]) -> list[str]:
         status = format.completion(todo.pending)
         priority = format.priority(todo.urgency)
 
-        row = status + priority + todo.description
+        row = [status, priority, todo.description]
 
         if len(todo.todos) > 0:
             for child in todo.todos:
                 descendants = recurse_todo(child)
-                row += sub_todos(descendants, args.date, args.time)
+                row.append(sub_todos(descendants, args.date, args.time))
 
         project_name = format.project(todo.parent_workspace)
         due_date = f" due:{due_str(todo.due, args.date, args.time)}"
 
-        row += project_name + due_date
+        row.append(project_name)
+        row.append(due_date)
 
-        lines.append(row)
+        lines.append("".join(row))
 
     return lines

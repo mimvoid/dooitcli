@@ -11,20 +11,20 @@ def todo_to_markdown(args: Namespace, todo: Todo) -> str:
     indent = " " * (todo.nest_level * 4)
     checkbox = format.checkbox(todo.status, args.nonstandard)
 
-    text = indent + checkbox + todo.description
+    text = [indent, checkbox, todo.description]
 
     if args.due:
         if args.dataview:
-            text += format.dataview_due(todo.due, args.date)
+            text.append(format.dataview_due(todo.due, args.date))
         elif todo.due is not None:
-            text += f"  (due: {due_str(todo.due, args.date, args.time)})"
+            text.append(f"  (due: {due_str(todo.due, args.date, args.time)})")
 
     if args.urgency:
-        text += format.urgency(todo.urgency, args.dataview)
+        text.append(format.urgency(todo.urgency, args.dataview))
     if args.effort:
-        text += format.effort(todo.effort, args.dataview)
+        text.append(format.effort(todo.effort, args.dataview))
 
-    return text
+    return "".join(text)
 
 
 def todo_tree_to_markdown(args: Namespace, todo: Todo) -> list[str]:
@@ -33,7 +33,7 @@ def todo_tree_to_markdown(args: Namespace, todo: Todo) -> list[str]:
     Returns a list of the todo/s as strings in Markdown format.
     """
 
-    return list(map(lambda todo: todo_to_markdown(args, todo), recurse_todo(todo)))
+    return [todo_to_markdown(args, i) for i in recurse_todo(todo)]
 
 
 def workspace_to_markdown(

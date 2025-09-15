@@ -18,10 +18,6 @@ def filter_db(cls: type, attr: str, value: Any) -> Sequence:
     return manager.session.execute(query).scalars().all()
 
 
-def filter_obj(lst: Sequence, attr: str, value: Any) -> list:
-    return list(filter(lambda obj: getattr(obj, attr) == value, lst))
-
-
 def filter_todos(todos: Sequence[Todo], attr: str, value: Any) -> Sequence[Todo]:
     """
     Takes in a sequence of Todo objects, an attribute or property,
@@ -33,4 +29,4 @@ def filter_todos(todos: Sequence[Todo], attr: str, value: Any) -> Sequence[Todo]
     if attr in todo_opts.attr:
         return filter_db(Todo, attr, value)
 
-    return filter_obj(todos, attr, value)
+    return [todo for todo in todos if getattr(todo, attr) == value]

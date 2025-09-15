@@ -10,10 +10,7 @@ from dooit.api import Todo, Workspace
 
 
 def return_sig_type(value: property) -> type:
-    value_type = signature(value.fget).return_annotation
-
-    assert value_type != Signature.empty
-    return value_type
+    return signature(value.fget).return_annotation
 
 
 def recurse_type(value_type: type) -> type:
@@ -48,10 +45,8 @@ class OptionInspector:
         annotations = get_annotations(query_class)
 
         # Store public properties & attributes
-        for name, value in getmembers(
-            query_class, lambda v: not ismethod(v) and not callable(v)
-        ):
-            if name.startswith("_"):
+        for name, value in getmembers(query_class):
+            if ismethod(value) or callable(value) or name.startswith("_"):
                 continue
 
             if isinstance(value, property):
@@ -62,18 +57,19 @@ class OptionInspector:
                     self.input_attr[name] = annotations[name]
 
     def _add_property(self, name: str, value: property) -> None:
-        self.prop[name] = value
-
         if name in ("has_same_parent_kind", "session"):
             return
 
+        self.prop[name] = value
+
         try:
-            if not issubclass(return_sig_type(value), list):
+            # TODO: allow list query inputs
+            if value != Signature.empty and not issubclass(
+                return_sig_type(value), list
+            ):
                 self.input_prop[name] = value
-        except AssertionError:
-            self.input_prop[name] = value
         except TypeError:
-            pass
+            return
 
     def get_type(self, name: str) -> type:
         if name in self.attr:

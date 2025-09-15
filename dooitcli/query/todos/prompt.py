@@ -10,9 +10,7 @@ from ..._rich import console
 
 
 def prompt_name() -> str:
-    console.print(
-        "Choose one of the following attributes or properties:", new_line_start=True
-    )
+    console.print("\nChoose one of the following attributes or properties:")
 
     console.print("\nAttributes", style="bold")
     for k in todo_opts.input_attr:
