@@ -14,7 +14,10 @@ def main() -> None:
     ARGS = parser.parse_args()  # Get command line arguments with argparse
 
     if hasattr(ARGS, "func"):
-        ARGS.func(ARGS)  # Execute the specified command
+        try:
+            ARGS.func(ARGS)  # Execute the specified command
+        except KeyboardInterrupt:
+            return
     else:
         parser.print_help()
 
